@@ -10,6 +10,7 @@ Enemy::Enemy(CSimpleSprite* pSprite, float startX, float startY, float targetX, 
     m_speed = speed;
     m_power = power;
     m_health = health;
+    m_maxHealth = health;
 
     //Setting Target Location
     x = startX;
@@ -28,16 +29,22 @@ Enemy::~Enemy()
 
 void Enemy::Update(float deltaTime)
 {
-    angle = (m_yTarget - y) / (m_xTarget - x);
-    x += cosf(angle) * m_speed;
-    y += sinf(angle) * m_speed;
+    if (m_isActive)
+    {
+        angle = atan2f(m_yTarget - y, m_xTarget - x);
+        x += cosf(angle) * m_speed;
+        y += sinf(angle) * m_speed;
 
-    m_pEnemySprite->SetPosition(x, y);
+        m_pEnemySprite->SetPosition(x, y);
 
-    m_pEnemySprite->Update(deltaTime);
+        m_pEnemySprite->Update(deltaTime);
+    }
 }
 
 void Enemy::Draw()
 {
-    m_pEnemySprite->Draw();
+    if (m_isActive)
+    {
+        m_pEnemySprite->Draw();
+    }
 }

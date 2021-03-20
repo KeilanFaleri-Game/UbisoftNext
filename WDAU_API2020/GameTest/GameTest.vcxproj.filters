@@ -27,6 +27,9 @@
       <Filter>API</Filter>
     </ClCompile>
     <ClCompile Include="TargetPoint.cpp" />
+    <ClCompile Include="BaseStats.cpp" />
+    <ClCompile Include="SpawnTimer.cpp" />
+    <ClCompile Include="Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\app.h">
@@ -60,6 +63,9 @@
       <Filter>API</Filter>
     </ClInclude>
     <ClInclude Include="TargetPoint.h" />
+    <ClInclude Include="BaseStats.h" />
+    <ClInclude Include="SpawnTimer.h" />
+    <ClInclude Include="Tower.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

@@ -1,4 +1,5 @@
-﻿  Enemy.cpp
-  GameTest.vcxproj -> C:\Users\Keilan\Desktop\WDAU_API2020\x64\Debug\GameTest.exe
-  C:\Users\Keilan\Desktop\WDAU_API2020\\GameTest\glut\bin\x64\freeglut.dll
+﻿  GameTest.cpp
+C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\Tower.h(26,29): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
+  GameTest.vcxproj -> C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\x64\Debug\GameTest.exe
+  C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\\GameTest\glut\bin\x64\freeglut.dll
   1 File(s) copied
