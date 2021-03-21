@@ -1,11 +1,19 @@
-﻿  GameTest.cpp
+﻿  BaseStats.cpp
+  Bullet.cpp
+  GameTest.cpp
 C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\Tower.h(36,29): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
 C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\GameTest.cpp(47,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\GameTest.cpp(82,85): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\GameTest.cpp(82,65): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\GameTest.cpp(88,63): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\GameTest.cpp(96,48): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\GameTest.cpp(95,47): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\GameTest.cpp(81,63): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\GameTest.cpp(84,85): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\GameTest.cpp(84,65): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\GameTest.cpp(86,63): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\GameTest.cpp(98,48): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\GameTest.cpp(97,47): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  RoundManager.cpp
+  Tower.cpp
+C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\Tower.h(36,29): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
+C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\GameTest\Tower.cpp(28,30): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  Generating Code...
   GameTest.vcxproj -> C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\x64\Debug\GameTest.exe
   C:\Users\Keilan\Documents\GitHub\UbisoftNext\WDAU_API2020\\GameTest\glut\bin\x64\freeglut.dll
   1 File(s) copied

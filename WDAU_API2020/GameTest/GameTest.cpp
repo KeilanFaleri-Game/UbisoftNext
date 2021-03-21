@@ -78,7 +78,7 @@ void Update(float deltaTime)
         // randomly makes enemy pathing
         //--------------------------------------------
         TargetPoints.clear();
-        TargetPoints.push_back(TargetPoint(-100, 650 + 100));
+        TargetPoints.push_back(TargetPoint(-100, rand() % 650 + 100));
         for (int i = 0; i < 5; i++)
         {
             TargetPoints.push_back(TargetPoint(rand() % 170 * i + 200, rand() % 650 + 100));
