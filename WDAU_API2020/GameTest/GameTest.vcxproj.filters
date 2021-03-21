@@ -30,6 +30,8 @@
     <ClCompile Include="BaseStats.cpp" />
     <ClCompile Include="SpawnTimer.cpp" />
     <ClCompile Include="Tower.cpp" />
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="RoundManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\app.h">
@@ -66,6 +68,8 @@
     <ClInclude Include="BaseStats.h" />
     <ClInclude Include="SpawnTimer.h" />
     <ClInclude Include="Tower.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="RoundManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

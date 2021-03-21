@@ -6,6 +6,8 @@
 #include <windows.h> 
 #include <math.h>
 #include <vector>
+#include <time.h>
+#include <string>
 //------------------------------------------------------------------------
 #include "app\app.h"
 //------------------------------------------------------------------------
@@ -14,20 +16,20 @@
 #include "BaseStats.h"
 #include "SpawnTimer.h"
 #include "Tower.h"
+#include "RoundManager.h"
 //------------------------------------------------------------------------
 // Eample data....
 //------------------------------------------------------------------------
-//CSimpleSprite *testSprite2;
 
 std::vector<Enemy*> pActiveEnemies;
 std::vector<Enemy*> pEnemiesPool;
 std::vector<Tower*> pTowers;
+std::vector<Tower*> pTemplateTowers;
+RoundManager* pRoundManager;
 BaseStats* pPlayer;
 std::vector<TargetPoint> TargetPoints;
 SpawnTimer* pEnemyTimer;
-SpawnTimer* pShotTimer;
-
-//------------------------------------------------------------------------
+bool bCanBuy;
 
 //------------------------------------------------------------------------
 // Called before first update. Do any initial setup here.
@@ -35,33 +37,27 @@ SpawnTimer* pShotTimer;
 void Init()
 {
 
-	//BlueCircle		= App::CreateSprite(".\\TestData\\Shapes.bmp", 1, 1);
-	//BlueTriangle	= App::CreateSprite(".\\TestData\\Shapes.bmp", 1, 2);
-	//BlueSquare		= App::CreateSprite(".\\TestData\\Shapes.bmp", 2, 1);
-	//RedCircle		= App::CreateSprite(".\\TestData\\Shapes.bmp", 2, 2);
-	//RedSquare		= App::CreateSprite(".\\TestData\\Shapes.bmp", 3, 1);
-	//RedTriangle		= App::CreateSprite(".\\TestData\\Shapes.bmp", 3, 2);
+    //BlueCircle		= App::CreateSprite(".\\TestData\\Shapes.bmp", 1, 1);
+    //BlueTriangle	= App::CreateSprite(".\\TestData\\Shapes.bmp", 1, 2);
+    //BlueSquare		= App::CreateSprite(".\\TestData\\Shapes.bmp", 2, 1);
+    //RedCircle		= App::CreateSprite(".\\TestData\\Shapes.bmp", 2, 2);
+    //RedSquare		= App::CreateSprite(".\\TestData\\Shapes.bmp", 3, 1);
+    //RedTriangle		= App::CreateSprite(".\\TestData\\Shapes.bmp", 3, 2);
 
-	TargetPoints.push_back(TargetPoint(-100, 300));
-	TargetPoints.push_back(TargetPoint(300, 300));
-	TargetPoints.push_back(TargetPoint(300, 600));
-	TargetPoints.push_back(TargetPoint(600, 150));
-	TargetPoints.push_back(TargetPoint(1000, 300));
+    srand(time(NULL));
 
-	pPlayer = new BaseStats(100);
 
-	pEnemyTimer = new SpawnTimer(2000);
-	pShotTimer = new SpawnTimer(1000);
+    pPlayer = new BaseStats(100, 1000);
 
-	for (int i = 0; i < 20; i++)
-	{
-		pEnemiesPool.push_back(new Enemy(App::CreateSprite(".\\TestData\\Test.bmp", 8, 4),
-			TargetPoints[0].GetX(), TargetPoints[0].GetY(),
-			TargetPoints[1].GetX(), TargetPoints[1].GetY(),
-			2.0f,5,5));
-		pEnemiesPool[i]->GetSprite()->SetFrame(1);
-		pEnemiesPool[i]->GetSprite()->SetScale(2.0f);
-	}
+    pEnemyTimer = new SpawnTimer(2000);
+
+    pTemplateTowers.push_back(new Tower(App::CreateSprite(".\\TestData\\Shapes.bmp", 3, 2), -100, -100, 1000, 5, 200, 100));
+    pTemplateTowers.push_back(new Tower(App::CreateSprite(".\\TestData\\Shapes.bmp", 8, 4), -100, -100, 400, 2, 100, 250));
+    pTemplateTowers.push_back(new Tower(App::CreateSprite(".\\TestData\\Shapes.bmp", 3, 2), -100, -100, 2000, 20, 300, 1000));
+
+    bCanBuy = true;
+
+    pRoundManager = new RoundManager(0.5f);
 }
 
 //------------------------------------------------------------------------
@@ -70,147 +66,228 @@ void Init()
 //------------------------------------------------------------------------
 void Update(float deltaTime)
 {
+    pPlayer->Update(deltaTime);
 
-	if (pPlayer->GetHealth() <= 0)
-	{
-		pPlayer->SetIsAlive(false);
-	}
+    //------------------------------------------------
+    //Manages rounds and enemies
+    //------------------------------------------------
+    if (pEnemiesPool.empty() && pActiveEnemies.empty())
+    {
+        pRoundManager->NextRound();
+        //--------------------------------------------
+        // randomly makes enemy pathing
+        //--------------------------------------------
+        TargetPoints.clear();
+        TargetPoints.push_back(TargetPoint(-100, 650 + 100));
+        for (int i = 0; i < 5; i++)
+        {
+            TargetPoints.push_back(TargetPoint(rand() % 170 * i + 200, rand() % 650 + 100));
+        }
+        TargetPoints.push_back(TargetPoint(1024, rand() % 650 + 100));
 
+        //--------------------------------------------
+        // Creates enemies
+        //--------------------------------------------
+        for (int i = 0; i < 20; i++)
+        {
+            pEnemiesPool.push_back(new Enemy(App::CreateSprite(".\\TestData\\Shapes.bmp", 6, 1),
+                TargetPoints[0].GetX(), TargetPoints[0].GetY(),
+                TargetPoints[1].GetX(), TargetPoints[1].GetY(),
+                0.5f + pRoundManager->GetRound() * pRoundManager->GetDifficulty(), 
+                5 * pRoundManager->GetRound() * pRoundManager->GetDifficulty(), 
+                20 * pRoundManager->GetRound() * pRoundManager->GetDifficulty(),
+                10 * pRoundManager->GetRound()));
+            pEnemiesPool[i]->GetSprite()->SetFrame(rand() % 3);
+            pEnemiesPool[i]->GetSprite()->SetScale(0.5f);
+        }
+    }
+
+
+    //------------------------------------------------
+    //Spawns Enemies from pool
+    //------------------------------------------------
     if (pEnemyTimer->GetLimit() <= pEnemyTimer->GetTimer())
     {
-		if (pEnemiesPool.size() >= 0)
-		{
-			pActiveEnemies.push_back(pEnemiesPool[pEnemiesPool.size() - 1]);
-			pActiveEnemies.back()->SetIsActive(true);
-			pEnemiesPool.pop_back();
-			pEnemyTimer->ResetTimer();
-		}
+        if (!pEnemiesPool.empty())
+        {
+            pActiveEnemies.push_back(pEnemiesPool[pEnemiesPool.size() - 1]);
+            pActiveEnemies.back()->SetIsActive(true);
+            pEnemiesPool.pop_back();
+            pEnemyTimer->ResetTimer();
+        }
     }
-	else
-	{
-		pEnemyTimer->AddTime(deltaTime);
-	}
+    else
+    {
+        pEnemyTimer->AddTime(deltaTime);
+    }
 
-	//------------------------------------------------------------------------
-	//Enemy controls
-	//------------------------------------------------------------------------
-	for (int i = 0; i < pActiveEnemies.size(); i++)
-	{
-		pActiveEnemies[i]->Update(deltaTime);
+    //------------------------------------------------------------------------
+    //Enemy Pathing
+    //------------------------------------------------------------------------
+    for (int i = 0; i < pActiveEnemies.size(); i++)
+    {
+        pActiveEnemies[i]->Update(deltaTime);
 
-		float x, y;
-		pActiveEnemies[i]->GetSprite()->GetPosition(x, y);
+        float x, y;
+        pActiveEnemies[i]->GetSprite()->GetPosition(x, y);
 
-		if (x < TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetX() + 1 &&
-			x + 1 > TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetX() &&
-			y < TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetY() + 1 &&
-			y + 1 > TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetY())
-		{
-			pActiveEnemies[i]->NextPoint();
-			if (TargetPoints.size() == pActiveEnemies[i]->GetPointIndex())
-			{
-				pPlayer->RemoveHealth(pActiveEnemies[i]->GetPower());
+        if (x < TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetX() + 5 &&
+            x + 5 > TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetX() &&
+            y < TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetY() + 5 &&
+            y + 5 > TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetY())
+        {
+            pActiveEnemies[i]->NextPoint();
+            if (TargetPoints.size() == pActiveEnemies[i]->GetPointIndex())
+            {
+                pPlayer->RemoveHealth(pActiveEnemies[i]->GetPower());
+                pActiveEnemies.erase(pActiveEnemies.begin() + i);
+            }
+            pActiveEnemies[i]->SetTargetLocation(TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetX(), TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetY());
+        }
+    }
 
-				pActiveEnemies[i]->ResetPoint();
-				pActiveEnemies[i]->ResetHealth();
-				pActiveEnemies[i]->SetPos(TargetPoints[pActiveEnemies[i]->GetPointIndex() - 1].GetX(), TargetPoints[pActiveEnemies[i]->GetPointIndex() - 1].GetY());
-				pActiveEnemies[i]->SetIsActive(false);
-				pEnemiesPool.push_back(pActiveEnemies[i]);
-				pActiveEnemies.erase(pActiveEnemies.begin() + i);
-			}
-			pActiveEnemies[i]->SetTargetLocation(TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetX(), TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetY());
-		}
-		for (auto tower : pTowers)
-		{
-			if (tower->GetX() < TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetX() + 1 &&
-				tower->GetX() + tower->GetRange() > TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetX() &&
-				tower->GetY() < TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetY() + 1 &&
-				tower->GetY() + tower->GetRange() > TargetPoints[pActiveEnemies[i]->GetPointIndex()].GetY())
-			{
-				if (pShotTimer->GetLimit() <= pShotTimer->GetTimer())
-				{
-					pActiveEnemies[i]->RemoveHealth(tower->GetPower());
-				}
-				else
-				{
-					pShotTimer->AddTime(deltaTime);
-				}
-				if (pActiveEnemies[i]->GetHealth() <= 0)
-				{
-					pPlayer->UseMoney(pActiveEnemies[i]->GetPower());
-					pActiveEnemies[i]->ResetPoint();
-					pActiveEnemies[i]->ResetHealth();
-					pActiveEnemies[i]->SetPos(TargetPoints[pActiveEnemies[i]->GetPointIndex() - 1].GetX(), TargetPoints[pActiveEnemies[i]->GetPointIndex() - 1].GetY());
-					pActiveEnemies[i]->SetIsActive(false);
-					pEnemiesPool.push_back(pActiveEnemies[i]);
-					pActiveEnemies.erase(pActiveEnemies.begin() + i);
-				}
-			}
-		}
-	}
+    //------------------------------------------------
+    //Tower AI
+    //------------------------------------------------
+    for (auto tower : pTowers)
+    {
+        tower->Update(deltaTime);
 
-	float mX, mY;
-	if (pPlayer->GetMoney() >= 100)
-	{
-		if (App::IsKeyPressed('Q'))
-		{
-			App::GetMousePos(mX, mY);
-			pTowers.push_back(new Tower(App::CreateSprite(".\\TestData\\Test.bmp", 8, 4), mX, mY, 1000, 5, 300));
-			pPlayer->UseMoney(-pTowers.back()->GetCost());
-		}
-	}
-	//------------------------------------------------------------------------
-	// Sample Sound.
-	//------------------------------------------------------------------------
-	//if (App::GetController().CheckButton(XINPUT_GAMEPAD_B, true))
-	//{
-	//	App::PlaySound(".\\TestData\\Test.wav");
-	//}
+        for (int i = 0; i < pActiveEnemies.size(); i++)
+        {
+            if (tower->IsEnemyInRange(pActiveEnemies[i]->GetX(), pActiveEnemies[i]->GetY()))
+            {
+                //Limits how often towers can shoot
+                if (tower->GetSpawnTimer()->GetLimit() <= tower->GetSpawnTimer()->GetTimer())
+                {
+                    tower->Shoot(pActiveEnemies[i]);
+                    tower->GetSpawnTimer()->ResetTimer();
+                }
+                else
+                {
+                    tower->GetSpawnTimer()->AddTime(deltaTime);
+                }
+                if (pActiveEnemies[i]->GetHealth() <= 0)
+                {
+                    App::PlaySound(".\\TestData\\cartoon121.wav");
+                    pPlayer->UseMoney(pActiveEnemies[i]->GetMoney());
+                    pActiveEnemies.erase(pActiveEnemies.begin() + i);
+                }
+            }
+        }
+    }
+
+    //------------------------------------------------
+    //Shop Settings
+    //------------------------------------------------
+    float mX, mY;
+    if (App::IsKeyPressed('Q') && pPlayer->GetMoney() >= pTemplateTowers[0]->GetCost() && bCanBuy)
+    {
+        App::GetMousePos(mX, mY);
+        pTowers.push_back(new Tower(App::CreateSprite(".\\TestData\\Shapes.bmp", 6, 1), pTemplateTowers[0], mX, mY));
+        pTowers.back()->GetSprite()->SetFrame(3);
+        pTowers.back()->GetSprite()->SetScale(0.5f);
+        pPlayer->UseMoney(-pTowers.back()->GetCost());
+        bCanBuy = false;
+    }
+    if (App::IsKeyPressed('W') && pPlayer->GetMoney() >= pTemplateTowers[1]->GetCost() && bCanBuy)
+    {
+        App::GetMousePos(mX, mY);
+        pTowers.push_back(new Tower(App::CreateSprite(".\\TestData\\Shapes.bmp", 6, 1), pTemplateTowers[1], mX, mY));
+        pTowers.back()->GetSprite()->SetFrame(4);
+        pTowers.back()->GetSprite()->SetScale(0.75f);
+        pPlayer->UseMoney(-pTowers.back()->GetCost());
+        bCanBuy = false;
+    }
+    if (App::IsKeyPressed('E') && pPlayer->GetMoney() >= pTemplateTowers[2]->GetCost() && bCanBuy)
+    {
+        App::GetMousePos(mX, mY);
+        pTowers.push_back(new Tower(App::CreateSprite(".\\TestData\\Shapes.bmp", 6, 1), pTemplateTowers[2], mX, mY));
+        pTowers.back()->GetSprite()->SetFrame(5);
+        pTowers.back()->GetSprite()->SetScale(1);
+        pPlayer->UseMoney(-pTowers.back()->GetCost());
+        bCanBuy = false;
+    }
+    if (!App::IsKeyPressed('Q') && !App::IsKeyPressed('W') && !App::IsKeyPressed('E') && bCanBuy == false)
+    {
+        bCanBuy = true;
+    }
 
 }
 
 
 void Render()
-{	
-    for (int i = 0; i < TargetPoints.size()-1; i++)
+{
+    if (!TargetPoints.empty())
     {
-		App::DrawLine(TargetPoints[i].GetX(), TargetPoints[i].GetY(),TargetPoints[i+1].GetX(), TargetPoints[i+1].GetY());   
+        for (int i = 0; i < TargetPoints.size() - 1; i++)
+        {
+            App::DrawLine(TargetPoints[i].GetX(), TargetPoints[i].GetY(), TargetPoints[i + 1].GetX(), TargetPoints[i + 1].GetY());
+        }
     }
 
-	for (auto enemy : pActiveEnemies)
-	{
-		enemy->Draw();
-	}
+    for (auto enemy : pActiveEnemies)
+    {
+        enemy->Draw();
+    }
 
-	for (auto tower : pTowers)
-	{
-		tower->Draw();
-	}
+    for (auto tower : pTowers)
+    {
+        tower->Draw();
+    }
 
-	if (!pPlayer->GetIsAlive())
-	{
-		App::Print(450, 670, "You Lose");
-	}
+    if (!pPlayer->GetIsAlive())
+    {
+        App::Print(450, 670, "You Lose");
+    }
 
-	//char money[10];
-	//sprintf(money, "%f", pPlayer->GetMoney());
-	//int mon = pPlayer->GetMoney();
-	//App::Print(850, 700, "Money:");
-    //App::Print(920, 700, (char*)mon);
-	
+    
+    std::string money = std::to_string(pPlayer->GetMoney());
+    char* charMoney;
+    charMoney = &money[0];
+    App::Print(850, 700, "Money:");
+    App::Print(920, 700, charMoney);
+
+    std::string round = std::to_string(pRoundManager->GetRound());
+    char* charRound;
+    charRound = &round[0];
+    App::Print(850, 720, "Round:");
+    App::Print(920, 720, charRound);
+
+    std::string health = std::to_string(pPlayer->GetHealth());
+    char* charHealth;
+    charHealth = &health[0];
+    App::Print(850, 740, "Health:");
+    App::Print(920, 740, charHealth);
 }
+
 //------------------------------------------------------------------------
 // Add your shutdown code here. Called when the APP_QUIT_KEY is pressed.
 // Just before the app exits.
 //------------------------------------------------------------------------
 void Shutdown()
 {
-	for (auto enemy : pActiveEnemies)
-	{
-		delete enemy;
-	}
-	for (auto enemy : pEnemiesPool)
-	{
-		delete enemy;
-	}
+    for (auto enemy : pActiveEnemies)
+    {
+        delete enemy;
+    }
+
+    for (auto enemy : pEnemiesPool)
+    {
+        delete enemy;
+    }
+
+    for (auto tower : pTowers)
+    {
+        delete tower;
+    }
+
+    for (auto tower : pTemplateTowers)
+    {
+        delete tower;
+    }
+
+    delete pRoundManager;
+    delete pPlayer;
+    delete pEnemyTimer;
 }

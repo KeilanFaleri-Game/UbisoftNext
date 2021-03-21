@@ -3,7 +3,7 @@
 #include "Enemy.h"
 #include "App/app.h"
 
-Enemy::Enemy(CSimpleSprite* pSprite, float startX, float startY, float targetX, float targetY, float speed, int power, int health)
+Enemy::Enemy(CSimpleSprite* pSprite, float startX, float startY, float targetX, float targetY, float speed, int power, int health, int money)
 {
     //Setting Base Values
     m_pEnemySprite = pSprite;
@@ -11,6 +11,7 @@ Enemy::Enemy(CSimpleSprite* pSprite, float startX, float startY, float targetX, 
     m_power = power;
     m_health = health;
     m_maxHealth = health;
+    m_money = money;
 
     //Setting Target Location
     x = startX;
@@ -29,6 +30,9 @@ Enemy::~Enemy()
 
 void Enemy::Update(float deltaTime)
 {
+    //--------------------------------------------
+    //enemy movement
+    //--------------------------------------------
     if (m_isActive)
     {
         angle = atan2f(m_yTarget - y, m_xTarget - x);

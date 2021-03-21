@@ -14,4 +14,11 @@ BaseStats::~BaseStats()
 
 void BaseStats::Update(float deltaTime)
 {
+    //------------------------------------------------
+    //Kills Player
+    //------------------------------------------------
+    if (GetHealth() <= 0)
+    {
+        SetIsAlive(false);
+    }
 }

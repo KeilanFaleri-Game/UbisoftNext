@@ -184,7 +184,9 @@
     <ClInclude Include="App\SimpleSprite.h" />
     <ClInclude Include="App\TextureLoader.h" />
     <ClInclude Include="BaseStats.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="RoundManager.h" />
     <ClInclude Include="SpawnTimer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TargetPoint.h" />
@@ -199,8 +201,10 @@
     <ClCompile Include="App\SimpleSprite.cpp" />
     <ClCompile Include="App\TextureLoader.cpp" />
     <ClCompile Include="BaseStats.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameTest.cpp" />
+    <ClCompile Include="RoundManager.cpp" />
     <ClCompile Include="SpawnTimer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

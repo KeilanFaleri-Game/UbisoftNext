@@ -11,6 +11,7 @@ protected:
     int m_health;
     int m_maxHealth;
     int m_targetPointIndex;
+    int m_money;
 
     float x, y;
     float angle;
@@ -21,7 +22,7 @@ protected:
     bool m_isActive;
 
 public:
-    Enemy(CSimpleSprite* pSprite, float startX, float startY, float targetX, float targetY, float speed = 2, int power = 1, int health = 1);
+    Enemy(CSimpleSprite* pSprite, float startX, float startY, float targetX, float targetY, float speed = 2, int power = 1, int health = 1, int money = 10);
     virtual ~Enemy();
 
     virtual void Update(float deltaTime);
@@ -33,14 +34,17 @@ public:
     void SetAngle(float a) { angle = a; }
 
     void SetPos(float pX, float pY) { x = pX; y = pY; }
+    float GetX() { return x; }
+    float GetY() { return y; }
 
     int GetPointIndex() { return  m_targetPointIndex; }
     CSimpleSprite* GetSprite() { return m_pEnemySprite; }
     int GetPower() { return m_power; }
 
     void RemoveHealth(int damage) { m_health -= damage; }
-    void ResetHealth() { m_health = m_maxHealth; }
     int GetHealth() { return m_health; }
+
+    int GetMoney() { return m_money; }
 
     void SetIsActive(bool active) { m_isActive = active; }
 };
